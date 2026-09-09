@@ -1,10 +1,13 @@
 mod db;
+mod models;
 mod routes;
 
-use crate::db::create_pool;
 use axum::{Router, routing::get};
+use db::create_pool;
 use dotenv::dotenv;
 use std::env;
+
+struct AppState {}
 
 #[tokio::main]
 async fn main() {
