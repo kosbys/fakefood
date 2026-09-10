@@ -1,11 +1,13 @@
 use axum::{Json, extract::State};
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use crate::{AppState, error::AppError};
 
 #[derive(Debug, Deserialize)]
 pub struct AddOrderRequest {
     pub items: Vec<OrderItemRequest>,
+    pub customer_id: Uuid,
 }
 
 #[derive(Debug, Deserialize)]
