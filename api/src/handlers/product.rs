@@ -11,3 +11,5 @@ async fn get_all_products(State(state): State<AppState>) -> Result<Json<Vec<Prod
 
     Ok(Json(products))
 }
+
+async fn get_product() {}

@@ -31,7 +31,7 @@ pub struct OrderResponse {
     items: Vec<OrderItemResponse>,
 }
 
-async fn add_order(
+async fn create_order(
     State(state): State<AppState>,
     Json(order): Json<AddOrderRequest>,
 ) -> Result<Json<OrderResponse>, AppError> {
@@ -58,7 +58,9 @@ async fn add_order(
     let mut transaction = state.db.begin().await?;
 
     let order_id = sqlx::query!(
-        "INSERT INTO orders (status, total) VALUES ('processing', $1) RETURNING id",
+        r#"
+        INSERT INTO orders (status, total) VALUES ('processing', $1) RETURNING id as "id!"
+        "#,
         total
     )
     .fetch_one(&mut *transaction)
@@ -97,6 +99,6 @@ async fn add_order(
     }))
 }
 
-async fn get_orders() {}
+async fn get_user_orders() {}
 
 async fn clear_orders() {}
