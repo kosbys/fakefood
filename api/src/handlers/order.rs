@@ -31,7 +31,7 @@ pub struct OrderResponse {
     items: Vec<OrderItemResponse>,
 }
 
-async fn create_order(
+pub async fn create_order(
     State(state): State<AppState>,
     Json(order): Json<AddOrderRequest>,
 ) -> Result<Json<OrderResponse>, AppError> {
@@ -99,6 +99,6 @@ async fn create_order(
     }))
 }
 
-async fn get_user_orders() {}
+pub async fn get_user_orders() {}
 
-async fn clear_orders() {}
+pub async fn clear_orders() {}

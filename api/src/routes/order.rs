@@ -1,9 +1,13 @@
-use axum::Router;
+use axum::{
+    Router,
+    routing::{delete, get, post},
+};
 
-async fn order_router() {}
+use crate::handlers::order::{clear_orders, create_order, get_user_orders};
 
-async fn create_order() {}
-
-async fn clear_orders() {}
-
-async fn get_user_orders() {}
+async fn order_router() {
+    let router = Router::new()
+        .route("/", post(create_order))
+        .route("/{id}", get(get_user_orders()))
+        .route("/clear", delete(clear_orders()));
+}
