@@ -1,4 +1,4 @@
-use axum::{Json, extract::State};
+use axum::{Json, extract::State, http::StatusCode};
 use axum_extra::extract::CookieJar;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
@@ -153,4 +153,14 @@ pub async fn get_user_orders(
     Ok(Json(order_responses))
 }
 
-pub async fn clear_orders() {}
+pub async fn clear_orders(
+    CurrentUser { id }: CurrentUser,
+    State(state): State<AppState>,
+) -> Result<StatusCode, AppError> {
+    // cascades and deletes order items
+    sqlx::query!("DELETE FROM orders WHERE user_id = $1", id)
+        .execute(&state.db)
+        .await?;
+
+    Ok(StatusCode::OK)
+}
