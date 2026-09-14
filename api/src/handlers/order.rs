@@ -1,8 +1,9 @@
 use axum::{Json, extract::State};
+use axum_extra::extract::CookieJar;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::{AppState, error::AppError};
+use crate::{AppState, db, error::AppError, extractors::current_user::CurrentUser};
 
 #[derive(Debug, Deserialize)]
 pub struct AddOrderRequest {
@@ -16,7 +17,7 @@ pub struct OrderItemRequest {
     pub quantity: i32,
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct OrderItemResponse {
     pub product_id: i32,
     pub quantity: i32,
@@ -32,6 +33,7 @@ pub struct OrderResponse {
 }
 
 pub async fn create_order(
+    CurrentUser { id }: CurrentUser,
     State(state): State<AppState>,
     Json(order): Json<AddOrderRequest>,
 ) -> Result<Json<OrderResponse>, AppError> {
@@ -59,9 +61,9 @@ pub async fn create_order(
 
     let order_id = sqlx::query!(
         r#"
-        INSERT INTO orders (status, total) VALUES ('processing', $1) RETURNING id as "id!"
+        INSERT INTO orders (status, total, user_id) VALUES ('processing', $1, $2) RETURNING id as "id!"
         "#,
-        total
+        total, id
     )
     .fetch_one(&mut *transaction)
     .await?;
@@ -99,6 +101,56 @@ pub async fn create_order(
     }))
 }
 
-pub async fn get_user_orders() {}
+// find all orders from user, then get all info about them neatly
+pub async fn get_user_orders(
+    CurrentUser { id }: CurrentUser,
+    State(state): State<AppState>,
+) -> Result<Json<Vec<OrderResponse>>, AppError> {
+    // each order gets an array containing items
+    let orders = sqlx::query!(
+        r#"
+        SELECT
+            o.id,
+            o.status,
+            o.total,
+            o.created_at,
+            json_agg(
+                json_build_object(
+                    'product_id', oi.product_id,
+                    'quantity', oi.quantity,
+                    'price', oi.price
+                )
+            ) AS items
+        FROM orders AS o
+        JOIN order_items AS oi
+            ON oi.order_id = o.id
+        WHERE o.user_id = $1
+          AND o.status = 'completed'
+        GROUP BY o.id, o.status, o.total, o.created_at
+        ORDER BY o.created_at DESC
+        "#,
+        &id
+    )
+    .fetch_all(&state.db)
+    .await?;
+
+    // deserializing to orderresponse
+    let order_responses: Vec<OrderResponse> = orders
+        .into_iter()
+        .map(|o| {
+            let items: Vec<OrderItemResponse> = serde_json::from_value(o.items.unwrap())
+                .map_err(|e| AppError::BadRequest(e.to_string()))?;
+
+            Ok(OrderResponse {
+                id: o.id,
+                status: o.status.to_string(),
+                total: o.total,
+                items,
+            })
+        })
+        .collect::<Result<Vec<OrderResponse>, AppError>>()?;
+
+    Ok(Json(order_responses))
+}
 
 pub async fn clear_orders() {}
