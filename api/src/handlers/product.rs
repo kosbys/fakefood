@@ -1,8 +1,8 @@
-use axum::extract::State;
+use axum::{extract::State, http::StatusCode};
 use serde::{Deserialize, Serialize};
 use sqlx::types::Json;
 
-use crate::{AppState, models::product::Product};
+use crate::{AppState, error::AppError, models::product::Product};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AddProductRequest {
@@ -21,12 +21,28 @@ async fn get_all_products(State(state): State<AppState>) -> Result<Json<Vec<Prod
 
 async fn create_product(
     State(state): State<AppState>,
-    Json(order): Json<AddProductRequest>,
-) -> Result<_, _> {
+    Json(product): Json<AddProductRequest>,
+) -> Result<StatusCode, AppError> {
+    sqlx::query!(
+        "INSERT INTO products (name, price) VALUES ($1, $2)",
+        product.name,
+        product.price
+    )
+    .execute(&state.db)
+    .await?;
+
+    Ok(StatusCode::OK)
 }
 
-async fn delete_product(State(state): State<AppState>) {
-    todo!()
+async fn delete_product(
+    State(state): State<AppState>,
+    Json(id): Json<i32>,
+) -> Result<StatusCode, AppError> {
+    sqlx::query_as!(Product, "DELETE FROM products WHERE id = $1", id)
+        .execute(&state.db)
+        .await?;
+
+    Ok(StatusCode::OK)
 }
 
 async fn get_product(State(state): State<AppState>) {}

@@ -7,7 +7,7 @@ use axum_extra::extract::{
 };
 use serde::Deserialize;
 
-use crate::error::AppError::{self, Forbidden};
+use crate::error::AppError::{self};
 
 #[derive(Deserialize)]
 pub struct AdminKey {

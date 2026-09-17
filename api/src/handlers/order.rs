@@ -1,9 +1,10 @@
 use axum::{Json, extract::State, http::StatusCode};
-use axum_extra::extract::CookieJar;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::{AppState, db, error::AppError, extractors::current_user::CurrentUser};
+use crate::{
+    AppState, error::AppError, extractors::current_user::CurrentUser, models::product::Product,
+};
 
 #[derive(Debug, Deserialize)]
 pub struct AddOrderRequest {
@@ -39,8 +40,9 @@ pub async fn create_order(
 ) -> Result<Json<OrderResponse>, AppError> {
     let products_id: Vec<i32> = order.items.iter().map(|item| item.product_id).collect();
 
-    let products = sqlx::query!(
-        "SELECT id, price FROM products WHERE id = ANY($1)",
+    let products = sqlx::query_as!(
+        Product,
+        "SELECT id, name, price FROM products WHERE id = ANY($1)",
         &products_id
     )
     .fetch_all(&state.db)
@@ -76,7 +78,7 @@ pub async fn create_order(
             .find(|product| product.id == item.product_id)
             .ok_or(AppError::NotFound)?;
 
-        sqlx::query!(
+        sqlx::query_as!(OrderItem,
             "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)",
             order_id.id,
             item.product_id,
@@ -158,7 +160,7 @@ pub async fn clear_orders(
     State(state): State<AppState>,
 ) -> Result<StatusCode, AppError> {
     // cascades and deletes order items
-    sqlx::query!("DELETE FROM orders WHERE user_id = $1", id)
+    sqlx::query_as!(Order, "DELETE FROM orders WHERE user_id = $1", id)
         .execute(&state.db)
         .await?;
 
