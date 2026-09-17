@@ -8,7 +8,7 @@ use crate::{
     handlers::order::{clear_orders, create_order, get_user_orders},
 };
 
-async fn order_router(state: AppState) -> Router {
+pub fn order_router(state: AppState) -> Router {
     Router::new()
         .route("/", post(create_order))
         .route("/", get(get_user_orders))

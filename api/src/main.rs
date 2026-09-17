@@ -7,11 +7,12 @@ mod middleware;
 mod models;
 mod routes;
 
-use axum::{Router, routing::get};
 use db::create_pool;
 use dotenv::dotenv;
 use sqlx::PgPool;
 use std::env;
+
+use crate::routes::create_router;
 
 #[derive(Clone)]
 struct AppState {
@@ -28,9 +29,7 @@ async fn main() {
 
     let state = AppState { db };
 
-    let app = Router::new()
-        .with_state(state)
-        .route("/", get(|| async { "Hello" }));
+    let app = create_router(state);
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     println!("Working");
