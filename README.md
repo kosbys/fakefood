@@ -9,8 +9,18 @@ User adds item to cart -> send post request -> save cart items in state -> user 
 
 Endpoints
 GET all items
+
+
 GET item
+
+
 GET cart
+
+
 GET orders
+
+
 POST buy order
+
+
 DELETE clear past orders

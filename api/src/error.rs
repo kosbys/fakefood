@@ -4,6 +4,7 @@ pub enum AppError {
     Database(sqlx::Error),
     NotFound,
     BadRequest(String),
+    Forbidden,
 }
 
 impl From<sqlx::Error> for AppError {
@@ -24,6 +25,7 @@ impl IntoResponse for AppError {
                 )
             }
             AppError::NotFound => (StatusCode::NOT_FOUND, "Not Found".to_string()),
+            AppError::Forbidden => (StatusCode::FORBIDDEN, "ADMIN ONLY".to_string()),
         };
 
         (status, body).into_response()

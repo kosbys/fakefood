@@ -106,7 +106,7 @@ pub async fn get_user_orders(
     CurrentUser { id }: CurrentUser,
     State(state): State<AppState>,
 ) -> Result<Json<Vec<OrderResponse>>, AppError> {
-    // each order gets an array containing items
+    // each order gets an array containing items in json shape
     let orders = sqlx::query!(
         r#"
         SELECT
