@@ -1,6 +1,5 @@
 use axum::{Json, extract::State, http::StatusCode};
 use serde::{Deserialize, Serialize};
-use uuid::Uuid;
 
 use crate::{
     AppState, error::AppError, extractors::current_user::CurrentUser, models::product::Product,
@@ -9,7 +8,6 @@ use crate::{
 #[derive(Debug, Deserialize)]
 pub struct AddOrderRequest {
     pub items: Vec<OrderItemRequest>,
-    pub customer_id: Uuid,
 }
 
 #[derive(Debug, Deserialize)]
@@ -33,6 +31,7 @@ pub struct OrderResponse {
     items: Vec<OrderItemResponse>,
 }
 
+// TODO: HANDLE EMPTY ORDER
 pub async fn create_order(
     CurrentUser { id }: CurrentUser,
     State(state): State<AppState>,
@@ -160,7 +159,7 @@ pub async fn clear_orders(
     State(state): State<AppState>,
 ) -> Result<StatusCode, AppError> {
     // cascades and deletes order items
-    sqlx::query_as!(Order, "DELETE FROM orders WHERE user_id = $1", id)
+    sqlx::query!("DELETE FROM orders WHERE user_id = $1", id)
         .execute(&state.db)
         .await?;
 

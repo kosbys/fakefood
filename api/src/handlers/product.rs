@@ -33,6 +33,7 @@ pub async fn get_all_products(
     Ok(Json(products))
 }
 
+// TODO: VERIFICATION FOR REAL PRODUCT
 pub async fn create_product(
     State(state): State<AppState>,
     Json(product): Json<AddProductRequest>,
