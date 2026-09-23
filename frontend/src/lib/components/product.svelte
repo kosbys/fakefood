@@ -16,7 +16,7 @@
     <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
     <p class="opacity-50">calories, category, etc</p>
     <div class="card-actions flex">
-      <button class="btn btn-primary grow text-lg">Add to cart</button>
+        <label for="cart-drawer" class="drawer-button btn btn-primary grow text-lg">Open drawer</label>
     </div>
   </div>
 </div>
