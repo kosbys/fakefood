@@ -1,3 +1,7 @@
+<script>
+    // props
+</script>
+
 <div class="card bg-base-100 w-96 shadow-sm">
   <figure>
     <img
@@ -5,10 +9,14 @@
       alt="Shoes" />
   </figure>
   <div class="card-body">
-    <h2 class="card-title">Card Title</h2>
+      <div class="flex flex-row justify-between">
+          <h2 class="card-title">Card Titlaae</h2>
+          <h2 class="card-title">price</h2>
+      </div>
     <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
-    <div class="card-actions justify-end">
-      <button class="btn btn-primary">Buy Now</button>
+    <p class="opacity-50">calories, category, etc</p>
+    <div class="card-actions flex">
+      <button class="btn btn-primary grow text-lg">Add to cart</button>
     </div>
   </div>
 </div>
