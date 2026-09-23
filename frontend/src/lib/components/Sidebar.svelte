@@ -6,7 +6,6 @@
   <input id="cart-drawer" type="checkbox" class="drawer-toggle" />
   <div class="drawer-content max-w-2/4 items-center m-auto">
     {@render children()}
-    <label for="cart-drawer" class="drawer-button btn btn-primary">Open drawer</label>
   </div>
   <div class="drawer-side">
     <label for="cart-drawer" aria-label="close sidebar" class="drawer-overlay"></label>
