@@ -59,7 +59,7 @@ pub async fn update_product() {
 
 pub async fn delete_product(
     State(state): State<AppState>,
-    Json(id): Json<i32>,
+    Path(id): Path<i32>,
 ) -> Result<StatusCode, AppError> {
     sqlx::query_as!(Product, "DELETE FROM products WHERE id = $1", id)
         .execute(&state.db)

@@ -7,6 +7,7 @@
     let { data } = $props();
 
     let search = $state("");
+
     let currentCategory = $state("");
 
 </script>
@@ -14,10 +15,7 @@
 
 <div class="gap-4 flex flex-col">
     <Search bind:value={search} />
-    <Categories bind:currentCategory />
+    <Categories categories={data.categories} bind:currentCategory />
     <Welcome />
-    <ProductList {search} {currentCategory} />
-    {#each data.products as product}
-	 <div>product</div>
-    {/each}
+    <ProductList {search} {currentCategory} products={data.products} />
 </div>
