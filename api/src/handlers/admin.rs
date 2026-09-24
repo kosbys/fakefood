@@ -9,7 +9,7 @@ use serde::Deserialize;
 
 use crate::error::AppError::{self};
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct AdminKey {
     pub key: String,
 }
@@ -24,7 +24,7 @@ pub async fn admin_login(
         return Err(AppError::Forbidden);
     }
 
-    let cookie = Cookie::build(("admin_key", admin_key))
+    let cookie = Cookie::build(("admin", admin_key))
         .path("/")
         .http_only(true)
         .same_site(SameSite::Lax)

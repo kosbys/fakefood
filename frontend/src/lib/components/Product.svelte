@@ -1,14 +1,15 @@
 <script>
     // props
+    //
 </script>
 
 <div class="card bg-base-100 w-96 shadow-sm">
   <figure>
     <img
-      src="https://d.uguu.se/iLGyhsog.webp"
+      src="https://www.foodandwine.com/thmb/Wd4lBRZz3X_8qBr69UOu2m7I2iw=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/classic-cheese-pizza-FT-RECIPE0422-31a2c938fc2546c9a07b7011658cfd05.jpg"
       alt="Shoes" />
   </figure>
-  <div class="card-body">
+  <div class="card-body bg-black">
       <div class="flex flex-row justify-between">
           <h2 class="card-title">Card Titlaae</h2>
           <h2 class="card-title">price</h2>

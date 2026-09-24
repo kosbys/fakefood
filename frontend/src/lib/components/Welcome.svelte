@@ -1,3 +1,9 @@
+<script>
+    // if a search term/category is selected, remove from dom
+</script>
+
+
+
 <div class="card card-side bg-secondary shadow-sm rounded-2xl w-fw-fit self-center">
     <div class="hover-3d">
       <!-- content -->

@@ -41,7 +41,7 @@ pub async fn create_order(
 
     let products = sqlx::query_as!(
         Product,
-        "SELECT id, name, price FROM products WHERE id = ANY($1)",
+        "SELECT id, name, price, category FROM products WHERE id = ANY($1)",
         &products_id
     )
     .fetch_all(&state.db)

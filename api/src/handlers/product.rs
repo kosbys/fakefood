@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AddProductRequest {
     pub name: String,
+    pub category: String,
     pub price: i32,
 }
 
@@ -26,7 +27,7 @@ pub async fn get_product(
 pub async fn get_all_products(
     State(state): State<AppState>,
 ) -> Result<Json<Vec<Product>>, AppError> {
-    let products = sqlx::query_as!(Product, "SELECT id, name, price FROM products")
+    let products = sqlx::query_as!(Product, "SELECT id, name, price, category FROM products")
         .fetch_all(&state.db)
         .await?;
 
@@ -34,14 +35,16 @@ pub async fn get_all_products(
 }
 
 // TODO: VERIFICATION FOR REAL PRODUCT
+// no empty, validation, etc
 pub async fn create_product(
     State(state): State<AppState>,
     Json(product): Json<AddProductRequest>,
 ) -> Result<StatusCode, AppError> {
     sqlx::query!(
-        "INSERT INTO products (name, price) VALUES ($1, $2)",
+        "INSERT INTO products (name, price, category) VALUES ($1, $2, $3)",
         product.name,
-        product.price
+        product.price,
+        product.category
     )
     .execute(&state.db)
     .await?;
